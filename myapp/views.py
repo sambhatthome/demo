@@ -23,3 +23,9 @@ class IMURecordViewSet(viewsets.ModelViewSet):
     queryset = IMURecord.objects.all().order_by('timestamp')
     serializer_class = IMURecordSerializer
     authentication_classes = (CsrfExemptSessionAuthentication,)
+
+from django.http import JsonResponse
+import time
+
+def current_time(request):
+    return JsonResponse({'epoch': int(time.time())})
