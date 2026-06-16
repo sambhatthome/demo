@@ -11,6 +11,4 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("todos/", views.todos, name="Todos"),
     path('time/', current_time),
-    path('', include(router.urls)),
-]
-
+] + router.urls
