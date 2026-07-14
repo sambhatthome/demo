@@ -1,6 +1,6 @@
 from django.urls import path, include
 from . import views
-from .views import current_time
+from .views import current_time, collection_status, pause_collection, resume_collection
 from rest_framework.routers import DefaultRouter
 from myapp.views import IMURecordViewSet
 
@@ -11,4 +11,7 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("todos/", views.todos, name="Todos"),
     path('time/', current_time),
+    path('status/', collection_status),
+    path('pause/', pause_collection),
+    path('resume/', resume_collection),
 ] + router.urls
