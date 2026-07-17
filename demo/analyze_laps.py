@@ -27,7 +27,7 @@ if rows:
     lap_count = 1
     for row in rows[1:]:
         curr_time = datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S')
-        if (curr_time - prev_time).total_seconds() > 2:
+        if (curr_time - prev_time).total_seconds() > 4:
             lap_count += 1
         prev_time = curr_time
 
