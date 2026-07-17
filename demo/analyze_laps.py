@@ -9,10 +9,10 @@ cursor = conn.cursor()
 cursor.execute("""
     SELECT timestamp
     FROM myapp_imurecord
-    WHERE timestamp >= '2026-07-15T14:50:00Z'
-      AND timestamp <= '2026-07-15T23:59:59Z'
-      AND NOT (timestamp >= '2026-07-15T15:14:00Z' AND timestamp <= '2026-07-15T15:14:59Z')
-      AND NOT (timestamp >= '2026-07-15T20:58:00Z' AND timestamp <= '2026-07-15T20:58:59Z')
+    WHERE timestamp >= '2026-07-15 14:50:00'
+      AND timestamp <= '2026-07-15 23:59:59'
+      AND NOT (timestamp >= '2026-07-15 15:14:00' AND timestamp <= '2026-07-15 15:14:59')
+      AND NOT (timestamp >= '2026-07-15 20:58:00' AND timestamp <= '2026-07-15 20:58:59')
     ORDER BY timestamp ASC
 """)
 
@@ -23,10 +23,10 @@ print(f"Total records: {len(rows)}")
 
 lap_count = 0
 if rows:
-    prev_time = datetime.fromisoformat(rows[0][0].replace('Z', '+00:00'))
+    prev_time = datetime.strptime(rows[0][0], '%Y-%m-%d %H:%M:%S')
     lap_count = 1
     for row in rows[1:]:
-        curr_time = datetime.fromisoformat(row[0].replace('Z', '+00:00'))
+        curr_time = datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S')
         if (curr_time - prev_time).total_seconds() > 2:
             lap_count += 1
         prev_time = curr_time
