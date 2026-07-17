@@ -9,8 +9,8 @@ cursor = conn.cursor()
 cursor.execute("""
     SELECT timestamp
     FROM myapp_imurecord
-    WHERE timestamp >= '2026-07-15 14:50:00'
-      AND timestamp <= '2026-07-15 23:59:59'
+    WHERE timestamp >= '2026-07-17 15:36:00'
+      AND timestamp <= '2026-07-17 15:42:59'
       AND NOT (timestamp >= '2026-07-15 15:14:00' AND timestamp <= '2026-07-15 15:14:59')
       AND NOT (timestamp >= '2026-07-15 20:58:00' AND timestamp <= '2026-07-15 20:58:59')
     ORDER BY timestamp ASC
