@@ -1,5 +1,6 @@
 from django.shortcuts import render, HttpResponse
 from .models import TodoItem
+import json
 
 def home(request):
     return render(request, "home.html")
@@ -51,3 +52,28 @@ def resume_collection(request):
     global collection_paused
     collection_paused = False
     return JsonResponse({'status': 'resumed'})
+
+@csrf_exempt
+def imu_batch(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+    if collection_paused:
+        return JsonResponse({'status': 'paused, data ignored'}, status=200)
+    try:
+        data = json.loads(request.body)
+        records = []
+        for item in data:
+            records.append(IMURecord(
+                timestamp=item['timestamp'],
+                ax_mg=item['ax_mg'],
+                ay_mg=item['ay_mg'],
+                az_mg=item['az_mg'],
+                gx_dps=item['gx_dps'],
+                gy_dps=item['gy_dps'],
+                gz_dps=item['gz_dps'],
+                activity=item['activity']
+            ))
+        IMURecord.objects.bulk_create(records)
+        return JsonResponse({'saved': len(records)}, status=201)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
