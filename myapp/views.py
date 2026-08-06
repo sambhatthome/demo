@@ -45,7 +45,8 @@ def collection_status(request):
 @csrf_exempt
 def pause_collection(request):
     global collection_paused, just_paused
-    just_paused = True
+    if not collection_paused:
+        just_paused = True
     return JsonResponse({'status': 'pausing after current batch'})
 
 @csrf_exempt
