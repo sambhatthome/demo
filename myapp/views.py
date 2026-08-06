@@ -20,6 +20,7 @@ class CsrfExemptSessionAuthentication(SessionAuthentication):
         return
 
 collection_paused = False
+just_paused = False
 
 class IMURecordViewSet(viewsets.ModelViewSet):
     queryset = IMURecord.objects.all().order_by('timestamp')
@@ -39,22 +40,24 @@ def current_time(request):
     return JsonResponse({'epoch': int(time.time())})
 
 def collection_status(request):
-    return JsonResponse({'paused': collection_paused})
+    return JsonResponse({'paused': collection_paused, 'just_paused': just_paused})
 
 @csrf_exempt
 def pause_collection(request):
-    global collection_paused
-    collection_paused = True
-    return JsonResponse({'status': 'paused'})
+    global collection_paused, just_paused
+    just_paused = True
+    return JsonResponse({'status': 'pausing after current batch'})
 
 @csrf_exempt
 def resume_collection(request):
-    global collection_paused
+    global collection_paused, just_paused
     collection_paused = False
+    just_paused = False
     return JsonResponse({'status': 'resumed'})
 
 @csrf_exempt
 def imu_batch(request):
+    global collection_paused, just_paused
     if request.method != 'POST':
         return JsonResponse({'error': 'POST required'}, status=405)
     if collection_paused:
@@ -74,6 +77,9 @@ def imu_batch(request):
                 activity=item['activity']
             ))
         IMURecord.objects.bulk_create(records)
+        if just_paused:
+            just_paused = False
+            collection_paused = True
         return JsonResponse({'saved': len(records)}, status=201)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
