@@ -1,0 +1,11 @@
+db.sqlite3
+*.sqlite3
+*.csv
+*.pkl
+*.keras
+*.h5
+*.tflite
+*.cc
+__pycache__/
+.venv*/
+*.pyc
